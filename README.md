@@ -31,6 +31,9 @@ $ calc
 λ log10(10)
 => 1
 
+λ log
+=> log(n, base)
+
 λ log2(8)
 => 3
 
