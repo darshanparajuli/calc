@@ -15,6 +15,7 @@ pub enum TokenType {
     Identifier,
     Integer,
     Float,
+    Exponent,
 
     Error,
     EOL,
@@ -48,6 +49,7 @@ enum State {
     Integer,
     Float,
     Identifier,
+    Exponent,
 
     Finish,
 }
@@ -233,6 +235,10 @@ impl Scanner {
                         lexeme.push(self.next_char);
                         self.read_next_char();
                         self.next_state = State::Float;
+                    } else if self.next_char == 'e' {
+                        lexeme.push(self.next_char);
+                        self.read_next_char();
+                        self.next_state = State::Exponent;
                     } else {
                         self.next_state = State::Start;
                         return Token {
@@ -247,10 +253,36 @@ impl Scanner {
                         self.read_next_char();
                     }
 
+                    if self.next_char == 'e' {
+                        lexeme.push(self.next_char);
+                        self.read_next_char();
+                        self.next_state = State::Exponent;
+                    } else {
+                        self.next_state = State::Start;
+                        return Token {
+                            lexeme,
+                            token_type: TokenType::Float,
+                        }
+                    }
+                }
+                State::Exponent => {
+                    match self.next_char {
+                        '+' | '-' => {
+                            lexeme.push(self.next_char);
+                            self.read_next_char();
+                        }
+                        _ => {}
+                    }
+
+                    while Self::is_digit(self.next_char) {
+                        lexeme.push(self.next_char);
+                        self.read_next_char();
+                    }
+
                     self.next_state = State::Start;
                     return Token {
                         lexeme,
-                        token_type: TokenType::Float,
+                        token_type: TokenType::Exponent,
                     }
                 }
                 State::Finish => {

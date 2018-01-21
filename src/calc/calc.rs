@@ -23,9 +23,9 @@ impl Calculator {
 
         memory.borrow_mut().insert("ans".into(), 0.0);
 
-        constants.insert("pi", ::std::f64::consts::PI);
-        constants.insert("e", ::std::f64::consts::E);
-        constants.insert("inf", ::std::f64::INFINITY);
+        constants.insert("PI", ::std::f64::consts::PI);
+        constants.insert("E", ::std::f64::consts::E);
+        constants.insert("INF", ::std::f64::INFINITY);
 
         functions.insert("sin", Function {
             param_count: 1,
@@ -296,12 +296,15 @@ mod test {
         run_test!("10/2", "5");
         run_test!("26%12", "2");
         run_test!("3^3", "27");
+        run_test!("1e2", "100");
+        run_test!("5 + 1e2", "105");
     }
 
     #[test]
     fn constants() {
-        run_test!("pi", format!("{}", ::std::f64::consts::PI));
-        run_test!("e", format!("{}", ::std::f64::consts::E));
+        run_test!("PI", format!("{}", ::std::f64::consts::PI));
+        run_test!("E", format!("{}", ::std::f64::consts::E));
+        run_test!("INF", format!("{}", ::std::f64::INFINITY));
     }
 
     #[test]
@@ -348,12 +351,12 @@ mod test {
 
     #[test]
     fn builtins() {
-        run_test!("sin(pi)", format!("{}", ::std::f64::consts::PI.sin_cos().0));
-        run_test!("sin(pi/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().0));
-        run_test!("cos(pi)", format!("{}", ::std::f64::consts::PI.sin_cos().1));
-        run_test!("cos(pi/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().1));
-        run_test!("tan(pi)", format!("{}", ::std::f64::consts::PI.tan()));
-        run_test!("tan(pi/2)", format!("{}", (::std::f64::consts::PI / 2.0).tan()));
+        run_test!("sin(PI)", format!("{}", ::std::f64::consts::PI.sin_cos().0));
+        run_test!("sin(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().0));
+        run_test!("cos(PI)", format!("{}", ::std::f64::consts::PI.sin_cos().1));
+        run_test!("cos(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().1));
+        run_test!("tan(PI)", format!("{}", ::std::f64::consts::PI.tan()));
+        run_test!("tan(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).tan()));
         run_test!("abs(5)", "5");
         run_test!("abs(-5)", "5");
         run_test!("abs(-1.23)", "1.23");
@@ -367,7 +370,7 @@ mod test {
         run_test!("atan2(10, 20)", format!("{}", 20_f64.atan2(10_f64)));
         run_test!("sin", "sin(n)");
         run_test!("log(64, 8)", "2");
-        run_test!("ln(e)", "1");
+        run_test!("ln(E)", "1");
         run_test!("log2(32)", "5");
         run_test!("sqrt(16)", format!("{}", 16_f64.sqrt()));
         run_test!("cbrt(125)", format!("{}", 125_f64.cbrt()));

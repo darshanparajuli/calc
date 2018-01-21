@@ -9,7 +9,7 @@ use std::cell::RefCell;
 /// Addend  = Factor { Op1 Factor }.
 /// Factor  = Power [ Op2 Factor ].
 /// Power   = Literal | Call | "(" Exp ")" | Op0 Power.
-/// Literal = Float | Integer.
+/// Literal = Float | Integer | Exponent.
 /// Call    = Identifier [ "(" ExpList ")" ].
 /// ExpList = [ Exp { "," Exp } ].
 /// Op0     = "+" | "-".
@@ -58,6 +58,7 @@ impl Parser {
         let mut fs = HashSet::new();
         fs.insert(TokenType::Integer);
         fs.insert(TokenType::Float);
+        fs.insert(TokenType::Exponent);
         first_sets.insert(NonTerminal::Literal, fs);
 
         let mut fs = HashSet::new();
