@@ -250,6 +250,9 @@ mod test {
         run_test!("atan(20)", format!("{}", 20_f64.atan()));
         run_test!("atan2(10, 20)", format!("{}", 20_f64.atan2(10_f64)));
         run_test!("sin", "sin(n)");
+        run_test!("log(64, 8)", "2");
+        run_test!("ln(e)", "1");
+        run_test!("log2(32)", "5");
     }
 
     #[test]
