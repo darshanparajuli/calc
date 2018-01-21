@@ -25,21 +25,23 @@ fn main() {
     let mut calc = Calculator::new();
 
     loop {
-        input.clear();
         prompt();
 
+        input.clear();
         match io::stdin().read_line(&mut input) {
-            Ok(_) => (),
+            Ok(n) => if n == 0 {
+                println!();
+                break;
+            }
             Err(e) => {
                 panic!("Error: {}", e);
             }
         }
 
-        input = input.trim().into();
-        match input.as_str() {
+        match input.trim() {
             "exit" => break,
             "reset" => calc.reset(),
-            _ => {
+            input => {
                 match calc.run(&input) {
                     Ok(result) => {
                         if !result.is_empty() {
