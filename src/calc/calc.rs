@@ -73,6 +73,12 @@ impl Calculator {
             f: |p: &[f64]| -> f64 { p[0].atan() },
             desc: "atan(n)",
         });
+        functions.insert("atan2", Function {
+            param_count: 2,
+            f: |p: &[f64]| -> f64 { p[1].atan2(p[0]) },
+            desc: "atan2(x, y)",
+        });
+
 
         functions.insert("abs", Function {
             param_count: 1,
@@ -236,12 +242,13 @@ mod test {
         run_test!("abs(-5)", "5");
         run_test!("abs(-1.23)", "1.23");
         run_test!("abs(4.5)", "4.5");
-        run_test!("sinh(20)", format!("{}", (20.0 as f64).sinh()));
-        run_test!("cosh(20)", format!("{}", (20.0 as f64).cosh()));
-        run_test!("tanh(20)", format!("{}", (20.0 as f64).tanh()));
-        run_test!("asin(20)", format!("{}", (20.0 as f64).asin()));
-        run_test!("acos(20)", format!("{}", (20.0 as f64).acos()));
-        run_test!("atan(20)", format!("{}", (20.0 as f64).atan()));
+        run_test!("sinh(20)", format!("{}", 20_f64.sinh()));
+        run_test!("cosh(20)", format!("{}", 20_f64.cosh()));
+        run_test!("tanh(20)", format!("{}", 20_f64.tanh()));
+        run_test!("asin(20)", format!("{}", 20_f64.asin()));
+        run_test!("acos(20)", format!("{}", 20_f64.acos()));
+        run_test!("atan(20)", format!("{}", 20_f64.atan()));
+        run_test!("atan2(10, 20)", format!("{}", 20_f64.atan2(10_f64)));
         run_test!("sin", "sin(n)");
     }
 
