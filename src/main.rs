@@ -4,7 +4,8 @@ mod calc;
 
 use calc::Calculator;
 use std::io::{self, Write};
-use ansi_term::Color::{Green, Red, RGB};
+use ansi_term::Color::{Green, Red};
+use ansi_term::Style;
 
 fn main() {
     let mut input = String::new();
@@ -43,7 +44,7 @@ fn main() {
 }
 
 fn prompt() {
-    print!("{} ", RGB(161, 176, 184).bold().paint("λ"));
+    print!("{} ", Style::new().bold().paint("λ"));
     io::stdout().flush().unwrap();
 }
 
