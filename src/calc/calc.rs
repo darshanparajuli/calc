@@ -161,6 +161,21 @@ mod test {
     }
 
     #[test]
+    fn op_precedence() {
+        run_test!("1+3/6*2", "2");
+        run_test!("1+3*6/2", "10");
+        run_test!("2^3^2", "512");
+        run_test!("2^3+2", "10");
+        run_test!("2^(3+2)", "32");
+        run_test!("2^abs(-5)", "32");
+        run_test!("1+4-2^5/2+8*2", "5");
+        run_test!("(1+4-2)^5/2+8*2", "137.5");
+
+        let a = (1_f64 + 4_f64 - 2_f64).powf(5_f64) / ((2_f64 + 8_f64).sin_cos().1) * 2_f64;
+        run_test!("(1+4-2)^5/cos(2+8)*2", format!("{}", a));
+    }
+
+    #[test]
     fn ans() {
         let mut calc = Calculator::new();
         assert_eq!(calc.run("1+2").unwrap(), "3");
