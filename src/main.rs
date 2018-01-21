@@ -20,7 +20,7 @@ fn main() {
                 break;
             }
             Err(e) => {
-                println!("stdin error: {}", e);
+                println!("stdin error: {}\n", e);
                 continue;
             }
         }
@@ -48,9 +48,9 @@ fn prompt() {
 }
 
 fn print_result(result: &str) {
-    println!("{} {}", Green.paint("=>"), result);
+    println!("{} {}\n", Green.paint("=>"), result);
 }
 
 fn print_err(err: &str) {
-    println!("{} Error, {}", Red.paint("=>"), err);
+    println!("{} Error, {}\n", Red.paint("=>"), err);
 }
