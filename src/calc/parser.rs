@@ -4,7 +4,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 /// Grammar
-/// Line    = [ Identifier "=" ] Exp.           // "=" requires look-ahead
+/// Input   = [ Identifier "=" ] Exp.           // "=" requires look-ahead
 /// Exp     = Added { Op0 Addend }.
 /// Addend  = Factor { Op1 Factor }.
 /// Factor  = Power [ Op2 Power ].
@@ -342,7 +342,7 @@ impl Parser {
         }
     }
 
-    fn line(&mut self) -> Result<PResult, String> {
+    fn input(&mut self) -> Result<PResult, String> {
         let mut result = PResult {
             var: None,
             val: 0.0,
@@ -369,7 +369,7 @@ impl Parser {
         let mut result: Option<PResult> = None;
 
         if self.have_nt(&NonTerminal::Line) {
-            result = Some(self.line()?);
+            result = Some(self.input()?);
         }
 
         self.expect(&TokenType::EOL)?;
