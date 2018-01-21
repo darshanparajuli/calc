@@ -34,7 +34,8 @@ fn main() {
                 break;
             }
             Err(e) => {
-                panic!("Error: {}", e);
+                println!("stdin error: {}", e);
+                continue;
             }
         }
 
