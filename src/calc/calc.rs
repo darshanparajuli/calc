@@ -4,7 +4,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 pub struct Function {
-    pub param_count: usize,
+    pub param_count: isize,
     pub f: (fn(&[f64]) -> f64),
     desc: &'static str,
 }
@@ -25,6 +25,7 @@ impl Calculator {
 
         constants.insert("pi", ::std::f64::consts::PI);
         constants.insert("e", ::std::f64::consts::E);
+        constants.insert("inf", ::std::f64::INFINITY);
 
         functions.insert("sin", Function {
             param_count: 1,
@@ -104,6 +105,116 @@ impl Calculator {
             param_count: 2,
             f: |p: &[f64]| -> f64 { p[0].log(p[1]) },
             desc: "log(n, base)",
+        });
+        functions.insert("sqrt", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].sqrt() },
+            desc: "sqrt(n)",
+        });
+        functions.insert("cbrt", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].cbrt() },
+            desc: "cbrt(n)",
+        });
+        functions.insert("root", Function {
+            param_count: 2,
+            f: |p: &[f64]| -> f64 { p[0].powf(p[1].recip()) },
+            desc: "root(n, root)",
+        });
+        functions.insert("sign", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].signum() },
+            desc: "sign(n)",
+        });
+        functions.insert("exp", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].exp() },
+            desc: "exp(n)",
+        });
+
+        functions.insert("trunc", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].trunc() },
+            desc: "trunc(n)",
+        });
+        functions.insert("round", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].round() },
+            desc: "round(n)",
+        });
+        functions.insert("floor", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].floor() },
+            desc: "floor(n)",
+        });
+        functions.insert("ceil", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 { p[0].ceil() },
+            desc: "ceil(n)",
+        });
+
+        functions.insert("min", Function {
+            param_count: -2,
+            f: |p: &[f64]| -> f64 {
+                p.iter()
+                 .skip(1)
+                 .fold(p[0], |a, &b| a.min(b))
+            },
+            desc: "min(n, ...)",
+        });
+        functions.insert("max", Function {
+            param_count: -2,
+            f: |p: &[f64]| -> f64 {
+                p.iter()
+                 .skip(1)
+                 .fold(p[0], |a, &b| a.max(b))
+            },
+            desc: "max(n, ...)",
+        });
+
+        functions.insert("rad2deg", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (180_f64 / ::std::f64::consts::PI)
+            },
+            desc: "rad2deg(radians)",
+        });
+        functions.insert("deg2rad", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (::std::f64::consts::PI / 180_f64)
+            },
+            desc: "deg2rad(degrees)",
+        });
+
+        functions.insert("grad2deg", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (9_f64 / 10_f64)
+            },
+            desc: "grad2deg(gradians)",
+        });
+        functions.insert("deg2grad", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (10_f64 / 9_f64)
+            },
+            desc: "deg2grad(degrees)",
+        });
+
+        functions.insert("grad2rad", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (::std::f64::consts::PI / 200_f64)
+            },
+            desc: "grad2rad(gradians)",
+        });
+        functions.insert("rad2grad", Function {
+            param_count: 1,
+            f: |p: &[f64]| -> f64 {
+                p[0] * (200_f64 / ::std::f64::consts::PI)
+            },
+            desc: "rad2grad(radians)",
         });
 
         let functions = Rc::new(RefCell::new(functions));
@@ -258,6 +369,27 @@ mod test {
         run_test!("log(64, 8)", "2");
         run_test!("ln(e)", "1");
         run_test!("log2(32)", "5");
+        run_test!("sqrt(16)", format!("{}", 16_f64.sqrt()));
+        run_test!("cbrt(125)", format!("{}", 125_f64.cbrt()));
+        run_test!("root(140, 5)", format!("{}", 140_f64.powf(5_f64.recip())));
+        run_test!("sign(1)", format!("{}", 1_f64.signum()));
+        run_test!("sign(-1)", format!("{}", -1_f64.signum()));
+        run_test!("exp(20)", format!("{}", 20_f64.exp()));
+        run_test!("trunc(43.123)", format!("{}", 43.123_f64.trunc()));
+        run_test!("round(12.1234)", format!("{}", 12.1234_f64.round()));
+        run_test!("floor(18.9)", format!("{}", 18.9_f64.floor()));
+        run_test!("ceil(4.1)", format!("{}", 4.1_f64.ceil()));
+        run_test!("min(-5, -1, 2, 30, -49)", "-49");
+        run_test!("max(-5, -1, 8, 15, 4)", "15");
+
+        run_test!("rad2deg(16)", format!("{}", 16_f64.to_degrees()));
+        run_test!("deg2rad(16)", format!("{}", 16_f64.to_radians()));
+
+        run_test!("rad2grad(16)", format!("{}", 16_f64 * 200_f64 / ::std::f64::consts::PI));
+        run_test!("grad2rad(16)", format!("{}", 16_f64 * ::std::f64::consts::PI / 200_f64));
+
+        run_test!("deg2grad(16)", format!("{}", 16_f64 * 10_f64 / 9_f64));
+        run_test!("grad2deg(16)", format!("{}", 16_f64 * 9_f64 / 10_f64));
     }
 
     #[test]

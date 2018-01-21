@@ -305,11 +305,16 @@ impl Parser {
             self.expect(&TokenType::CloseParen)?;
             match self.functions.borrow().get(&lexeme.as_ref()) {
                 Some(function) => {
-                    if params.len() == function.param_count {
+                    if (function.param_count < 0 && params.len() >= function.param_count.abs() as usize) ||
+                       (params.len() == function.param_count as usize) {
                         let f = function.f;
                         Ok(f(&params))
                     } else {
-                        Err(format!("{} requires {} arguments", lexeme, function.param_count))
+                        if function.param_count < 0 {
+                            Err(format!("{} requires {} or more arguments", lexeme, function.param_count.abs()))
+                        } else {
+                            Err(format!("{} requires {} arguments", lexeme, function.param_count))
+                        }
                     }
                 }
                 None => Err(format!("unknown function: {}", lexeme)),
