@@ -2,6 +2,8 @@
 
 A simple command line calculator written in Rust.
 
+[![Build Status](https://travis-ci.org/darshanparajuli/calc.svg?branch=master)](https://travis-ci.org/darshanparajuli/calc)
+
 #### Example
 ```
 $ calc
