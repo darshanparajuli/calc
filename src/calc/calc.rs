@@ -137,6 +137,11 @@ impl Calculator {
             }
         }
     }
+
+    pub fn reset(&mut self) {
+        self.memory.borrow_mut().clear();
+        self.memory.borrow_mut().insert("ans".into(), 0.0);
+    }
 }
 
 #[cfg(test)]

@@ -38,6 +38,7 @@ fn main() {
         input = input.trim().into();
         match input.as_str() {
             "exit" => break,
+            "reset" => calc.reset(),
             _ => {
                 match calc.run(&input) {
                     Ok(result) => {
