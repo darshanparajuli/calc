@@ -1,6 +1,6 @@
 # calc
 
-A simple commandline calculator written in Rust.
+A simple command line calculator written in Rust.
 
 #### Example
 ```
