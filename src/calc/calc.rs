@@ -6,11 +6,13 @@ use std::cell::RefCell;
 pub struct Function {
     pub param_count: usize,
     pub f: (fn(&[f64]) -> f64),
+    desc: &'static str,
 }
 
 pub struct Calculator {
     parser: Parser,
     memory: Rc<RefCell<HashMap<String, f64>>>,
+    functions: Rc<RefCell<HashMap<&'static str, Function>>>,
 }
 
 impl Calculator {
@@ -27,71 +29,88 @@ impl Calculator {
         functions.insert("sin", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].sin_cos().0 },
+            desc: "sin(n)",
         });
         functions.insert("cos", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].sin_cos().1 },
+            desc: "cos(n)",
         });
         functions.insert("tan", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].tan() },
+            desc: "tan(n)",
         });
 
         functions.insert("sinh", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].sinh() },
+            desc: "sinh(n)",
         });
         functions.insert("cosh", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].cosh() },
+            desc: "cosh(n)",
         });
         functions.insert("tanh", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].tanh() },
+            desc: "tan(n)",
         });
 
         functions.insert("asin", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].asin() },
+            desc: "asin(n)",
         });
         functions.insert("acos", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].acos() },
+            desc: "acos(n)",
         });
         functions.insert("atan", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].atan() },
+            desc: "atan(n)",
         });
 
         functions.insert("abs", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].abs() },
+            desc: "abs(n)",
         });
         functions.insert("log10", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].log10() },
+            desc: "log10(n)",
         });
         functions.insert("ln", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].ln() },
+            desc: "ln(n)",
         });
         functions.insert("log2", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].log2() },
+            desc: "log2(n)",
         });
         functions.insert("log", Function {
             param_count: 2,
             f: |p: &[f64]| -> f64 { p[0].log(p[1]) },
+            desc: "log(n, base)",
         });
 
+        let functions = Rc::new(RefCell::new(functions));
+
         Calculator {
-            parser: Parser::new(functions, constants, memory.clone()),
+            parser: Parser::new(functions.clone(), constants, memory.clone()),
             memory,
+            functions,
         }
     }
 
     pub fn run(&mut self, input: &str) -> Result<String, String> {
-        match self.parser.parse(Scanner::new(&input)) {
+        match self.parser.parse(Scanner::new(input)) {
             Ok(result) => {
                 match result {
                     Some(result) => {
@@ -106,7 +125,10 @@ impl Calculator {
                     None => Ok("".into()),
                 }
             }
-            Err(e) => Err(e),
+            Err(e) => match self.functions.borrow().get(input) {
+                Some(f) => Ok(format!("{}", f.desc)),
+                None => Err(e),
+            }
         }
     }
 }
@@ -219,13 +241,13 @@ mod test {
         run_test!("asin(20)", format!("{}", (20.0 as f64).asin()));
         run_test!("acos(20)", format!("{}", (20.0 as f64).acos()));
         run_test!("atan(20)", format!("{}", (20.0 as f64).atan()));
+        run_test!("sin", "sin(n)");
     }
 
     #[test]
     fn error_handling() {
         run_test_err!("(2");
         run_test_err!("2-");
-        run_test_err!("sin");
         run_test_err!("sin 2");
         run_test_err!("()");
         run_test_err!("a");

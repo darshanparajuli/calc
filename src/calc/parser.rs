@@ -42,14 +42,14 @@ pub struct Parser {
     token: Token,
     first_sets: HashMap<NonTerminal, HashSet<TokenType>>,
 
-    functions: HashMap<&'static str, Function>,
+    functions: Rc<RefCell<HashMap<&'static str, Function>>>,
     constants: HashMap<&'static str, f64>,
     memory: Rc<RefCell<HashMap<String, f64>>>,
 }
 
 impl Parser {
     pub fn new(
-        functions: HashMap<&'static str, Function>,
+        functions: Rc<RefCell<HashMap<&'static str, Function>>>,
         constants: HashMap<&'static str, f64>,
         memory: Rc<RefCell<HashMap<String, f64>>>,
     ) -> Self {
@@ -303,7 +303,7 @@ impl Parser {
         if self.accept(&TokenType::OpenParen) {
             let params = self.exp_list()?;
             self.expect(&TokenType::CloseParen)?;
-            match self.functions.get(&lexeme.as_ref()) {
+            match self.functions.borrow().get(&lexeme.as_ref()) {
                 Some(function) => {
                     if params.len() == function.param_count {
                         let f = function.f;
@@ -333,7 +333,7 @@ impl Parser {
                     return false;
                 }
 
-                if self.functions.get(v).is_some() {
+                if self.functions.borrow().get(v).is_some() {
                     return false;
                 }
 
