@@ -16,28 +16,27 @@ fn main() {
 
         input.clear();
         match io::stdin().read_line(&mut input) {
-            Ok(n) => if n == 0 {
+            Ok(0) => {
                 println!();
                 break;
+            }
+            Ok(_) => match input.trim() {
+                "exit" => break,
+                "reset" => calc.reset(),
+                input => {
+                    match calc.run(&input) {
+                        Ok(result) => {
+                            if !result.is_empty() {
+                                print_result(&result);
+                            }
+                        }
+                        Err(e) => print_err(&e),
+                    }
+                }
             }
             Err(e) => {
                 println!("stdin error: {}\n", e);
                 continue;
-            }
-        }
-
-        match input.trim() {
-            "exit" => break,
-            "reset" => calc.reset(),
-            input => {
-                match calc.run(&input) {
-                    Ok(result) => {
-                        if !result.is_empty() {
-                            print_result(&result);
-                        }
-                    }
-                    Err(e) => print_err(&e),
-                }
             }
         }
     }
