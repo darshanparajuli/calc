@@ -15,17 +15,13 @@ macro_rules! print_err {
     )
 }
 
-fn prompt() {
-    print!("λ ");
-    io::stdout().flush().unwrap();
-}
-
 fn main() {
     let mut input = String::new();
     let mut calc = Calculator::new();
 
     loop {
-        prompt();
+        print!("λ ");
+        io::stdout().flush().unwrap();
 
         input.clear();
         match io::stdin().read_line(&mut input) {
