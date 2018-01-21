@@ -7,7 +7,7 @@ use std::cell::RefCell;
 /// Input   = [ Identifier "=" ] Exp.           // "=" requires look-ahead
 /// Exp     = Added { Op0 Addend }.
 /// Addend  = Factor { Op1 Factor }.
-/// Factor  = Power [ Op2 Power ].
+/// Factor  = Power [ Op2 Factor ].
 /// Power   = Literal | Call | "(" Exp ")" | Op0 Power.
 /// Literal = Float | Integer.
 /// Call    = Identifier [ "(" ExpList ")" ].
