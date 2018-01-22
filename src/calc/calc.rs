@@ -159,7 +159,7 @@ impl Calculator {
                  .skip(1)
                  .fold(p[0], |a, &b| a.min(b))
             },
-            desc: "min(n, ...)",
+            desc: "min(a, b, ...)",
         });
         functions.insert("max", Function {
             param_count: -2,
@@ -168,7 +168,7 @@ impl Calculator {
                  .skip(1)
                  .fold(p[0], |a, &b| a.max(b))
             },
-            desc: "max(n, ...)",
+            desc: "max(a, b, ...)",
         });
 
         functions.insert("rad2deg", Function {
