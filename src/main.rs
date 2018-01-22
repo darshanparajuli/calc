@@ -52,5 +52,5 @@ fn print_result(result: &str) {
 }
 
 fn print_err(err: &str) {
-    println!("{} Error, {}\n", Red.paint("=>"), err);
+    println!("{} {}\n", Red.paint("=>"), err);
 }

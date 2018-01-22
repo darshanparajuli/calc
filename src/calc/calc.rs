@@ -80,7 +80,6 @@ impl Calculator {
             desc: "atan2(x, y)",
         });
 
-
         functions.insert("abs", Function {
             param_count: 1,
             f: |p: &[f64]| -> f64 { p[0].abs() },
