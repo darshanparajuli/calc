@@ -405,7 +405,7 @@ mod test {
     }
 
     #[test]
-    fn regression() {
+    fn misc() {
         run_test!("2", "2");
         run_test!("(2)", "2");
         run_test!("-2", "-2");
