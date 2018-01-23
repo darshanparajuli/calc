@@ -24,15 +24,13 @@ fn main() {
                 "exit" => break,
                 "reset" => calc.reset(),
                 "help" => help(&calc),
-                input => {
-                    match calc.run(&input) {
-                        Ok(result) => {
-                            if !result.is_empty() {
-                                print_result(&result);
-                            }
+                input => match calc.run(&input) {
+                    Ok(result) => {
+                        if !result.is_empty() {
+                            print_result(&result);
                         }
-                        Err(e) => print_err(&e),
                     }
+                    Err(e) => print_err(&e),
                 }
             }
             Err(e) => {
