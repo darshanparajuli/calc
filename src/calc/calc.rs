@@ -13,6 +13,7 @@ pub struct Calculator {
     parser: Parser,
     memory: Rc<RefCell<HashMap<String, f64>>>,
     functions: Rc<RefCell<HashMap<&'static str, Function>>>,
+    constants: Rc<HashMap<&'static str, f64>>,
 }
 
 impl Calculator {
@@ -217,11 +218,13 @@ impl Calculator {
         });
 
         let functions = Rc::new(RefCell::new(functions));
+        let constants = Rc::new(constants);
 
         Calculator {
-            parser: Parser::new(functions.clone(), constants, memory.clone()),
+            parser: Parser::new(functions.clone(), constants.clone(), memory.clone()),
             memory,
             functions,
+            constants,
         }
     }
 
@@ -251,6 +254,24 @@ impl Calculator {
     pub fn reset(&mut self) {
         self.memory.borrow_mut().clear();
         self.memory.borrow_mut().insert("ans".into(), 0.0);
+    }
+
+    pub fn get_functions(&self) -> Vec<&str> {
+        let mut v = Vec::new();
+        for (n, _) in self.functions.borrow().iter() {
+            v.push(n.clone());
+        }
+        v.sort();
+        return v;
+    }
+
+    pub fn get_constants(&self) -> Vec<&str> {
+        let mut v = Vec::new();
+        for (c, _) in self.constants.iter() {
+            v.push(c.clone());
+        }
+        v.sort();
+        return v;
     }
 }
 

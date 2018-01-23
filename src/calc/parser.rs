@@ -43,14 +43,14 @@ pub struct Parser {
     first_sets: HashMap<NonTerminal, HashSet<TokenType>>,
 
     functions: Rc<RefCell<HashMap<&'static str, Function>>>,
-    constants: HashMap<&'static str, f64>,
+    constants: Rc<HashMap<&'static str, f64>>,
     memory: Rc<RefCell<HashMap<String, f64>>>,
 }
 
 impl Parser {
     pub fn new(
         functions: Rc<RefCell<HashMap<&'static str, Function>>>,
-        constants: HashMap<&'static str, f64>,
+        constants: Rc<HashMap<&'static str, f64>>,
         memory: Rc<RefCell<HashMap<String, f64>>>,
     ) -> Self {
         let mut first_sets = HashMap::new();

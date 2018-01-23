@@ -23,6 +23,7 @@ fn main() {
             Ok(_) => match input.trim() {
                 "exit" => break,
                 "reset" => calc.reset(),
+                "help" => help(&calc),
                 input => {
                     match calc.run(&input) {
                         Ok(result) => {
@@ -53,4 +54,10 @@ fn print_result(result: &str) {
 
 fn print_err(err: &str) {
     println!("{} {}\n", Red.paint("=>"), err);
+}
+
+fn help(calc: &Calculator) {
+    println!("{} Constants: {}", Green.paint("=>"), calc.get_constants().join(", "));
+    println!("   Functions: {}", calc.get_functions().join(", "));
+    println!("   Built-in variable: ans\n");
 }
