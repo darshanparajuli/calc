@@ -4,18 +4,18 @@ A simple command line calculator written in Rust.
 
 [![Build Status](https://travis-ci.org/darshanparajuli/calc.svg?branch=master)](https://travis-ci.org/darshanparajuli/calc)
 
-## Installation
+## Install
 
-#### Arch Linux Users
-Install `calc-git` package from AUR.
-
-#### Manual
+#### From source
 [Click here](https://www.rustup.rs) to install rust if you don't have it already.
 ```
 1. git clone https://github.com/darshanparajuli/calc
 2. cd calc
 3. cargo install
 ```
+
+#### Arch Linux
+Install `calc-git` package from AUR.
 
 ## Example
 ```
