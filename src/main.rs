@@ -57,5 +57,5 @@ fn print_err(err: &str) {
 fn help(calc: &Calculator) {
     println!("{} Constants: {}", Green.paint("=>"), calc.get_constants().join(", "));
     println!("   Functions: {}", calc.get_functions().join(", "));
-    println!("   Built-in variable: ans\n");
+    println!("   Variables: ans\n");
 }
