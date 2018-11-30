@@ -116,7 +116,7 @@ impl Scanner {
                         '\0' | '\n' => {
                             self.next_state = State::Finish;
                         }
-                        c @ '\t' | c @  ' ' => {
+                        c @ '\t' | c @ ' ' => {
                             self.eat(c);
                         }
                         '=' => {
@@ -124,70 +124,70 @@ impl Scanner {
                             return Token {
                                 lexeme: "=".to_owned(),
                                 token_type: TokenType::Equal,
-                            }
+                            };
                         }
                         '+' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "+".to_owned(),
                                 token_type: TokenType::Add,
-                            }
+                            };
                         }
                         '-' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "-".to_owned(),
                                 token_type: TokenType::Sub,
-                            }
+                            };
                         }
                         '*' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "*".to_owned(),
                                 token_type: TokenType::Mul,
-                            }
+                            };
                         }
                         '/' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "/".to_owned(),
                                 token_type: TokenType::Div,
-                            }
+                            };
                         }
                         '%' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "%".to_owned(),
                                 token_type: TokenType::Mod,
-                            }
+                            };
                         }
                         '^' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "^".to_owned(),
                                 token_type: TokenType::Pow,
-                            }
+                            };
                         }
                         ',' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: ",".to_owned(),
                                 token_type: TokenType::Comma,
-                            }
+                            };
                         }
                         '(' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: "(".to_owned(),
                                 token_type: TokenType::OpenParen,
-                            }
+                            };
                         }
                         ')' => {
                             self.read_next_char();
                             return Token {
                                 lexeme: ")".to_owned(),
                                 token_type: TokenType::CloseParen,
-                            }
+                            };
                         }
                         c @ '.' => {
                             self.read_next_char();
@@ -206,15 +206,16 @@ impl Scanner {
                                 return Token {
                                     lexeme,
                                     token_type: TokenType::Error,
-                                }
+                                };
                             }
                         }
                     }
                 }
                 State::Identifier => {
                     while Self::is_alpha(self.next_char)
-                            || Self::is_digit(self.next_char)
-                            || self.next_char == '_' {
+                        || Self::is_digit(self.next_char)
+                        || self.next_char == '_'
+                    {
                         lexeme.push(self.next_char);
                         self.read_next_char();
                     }
@@ -223,7 +224,7 @@ impl Scanner {
                     return Token {
                         lexeme,
                         token_type: TokenType::Identifier,
-                    }
+                    };
                 }
                 State::Integer => {
                     while Self::is_digit(self.next_char) {
@@ -244,7 +245,7 @@ impl Scanner {
                         return Token {
                             lexeme,
                             token_type: TokenType::Integer,
-                        }
+                        };
                     }
                 }
                 State::Float => {
@@ -262,7 +263,7 @@ impl Scanner {
                         return Token {
                             lexeme,
                             token_type: TokenType::Float,
-                        }
+                        };
                     }
                 }
                 State::Exponent => {
@@ -283,7 +284,7 @@ impl Scanner {
                     return Token {
                         lexeme,
                         token_type: TokenType::Exponent,
-                    }
+                    };
                 }
                 State::Finish => {
                     return Token {
@@ -302,7 +303,7 @@ impl Scanner {
 
         let token = self.next_token();
 
-        self.char_pos  = char_pos;
+        self.char_pos = char_pos;
         self.next_char = next_char;
         self.next_state = next_state;
 
@@ -316,12 +317,10 @@ impl Iterator for Scanner {
     fn next(&mut self) -> Option<Self::Item> {
         match self.next_state {
             State::Finish => None,
-            _ => Some(self.next_token())
+            _ => Some(self.next_token()),
         }
     }
 }
 
 #[cfg(test)]
-mod test {
-
-}
+mod test {}

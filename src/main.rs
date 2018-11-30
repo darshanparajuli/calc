@@ -2,10 +2,10 @@ extern crate ansi_term;
 
 mod calc;
 
-use calc::Calculator;
-use std::io::{self, Write};
 use ansi_term::Color::{Green, Red};
 use ansi_term::Style;
+use calc::Calculator;
+use std::io::{self, Write};
 
 fn main() {
     let mut input = String::new();
@@ -31,8 +31,8 @@ fn main() {
                         }
                     }
                     Err(e) => print_err(&e),
-                }
-            }
+                },
+            },
             Err(e) => {
                 println!("stdin error: {}\n", e);
                 continue;
@@ -55,7 +55,11 @@ fn print_err(err: &str) {
 }
 
 fn help(calc: &Calculator) {
-    println!("{} Constants: {}", Green.paint("=>"), calc.get_constants().join(", "));
+    println!(
+        "{} Constants: {}",
+        Green.paint("=>"),
+        calc.get_constants().join(", ")
+    );
     println!("   Functions: {}", calc.get_functions().join(", "));
     println!("   Variables: ans\n");
 }

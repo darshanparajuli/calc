@@ -1,8 +1,8 @@
-mod scanner;
-mod parser;
 mod calc;
+mod parser;
+mod scanner;
 
-use self::scanner::*;
-use self::parser::*;
-use self::calc::Function;
 pub use self::calc::Calculator;
+use self::calc::Function;
+use self::parser::*;
+use self::scanner::*;

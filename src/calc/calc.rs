@@ -1,7 +1,7 @@
 use calc::{Parser, Scanner};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::RefCell;
 
 pub struct Function {
     pub param_count: isize,
@@ -28,194 +28,270 @@ impl Calculator {
         constants.insert("E", ::std::f64::consts::E);
         constants.insert("INF", ::std::f64::INFINITY);
 
-        functions.insert("sin", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].sin_cos().0 },
-            desc: "sin(n)",
-        });
-        functions.insert("cos", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].sin_cos().1 },
-            desc: "cos(n)",
-        });
-        functions.insert("tan", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].tan() },
-            desc: "tan(n)",
-        });
-
-        functions.insert("sinh", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].sinh() },
-            desc: "sinh(n)",
-        });
-        functions.insert("cosh", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].cosh() },
-            desc: "cosh(n)",
-        });
-        functions.insert("tanh", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].tanh() },
-            desc: "tan(n)",
-        });
-
-        functions.insert("asin", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].asin() },
-            desc: "asin(n)",
-        });
-        functions.insert("acos", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].acos() },
-            desc: "acos(n)",
-        });
-        functions.insert("atan", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].atan() },
-            desc: "atan(n)",
-        });
-        functions.insert("atan2", Function {
-            param_count: 2,
-            f: |p: &[f64]| -> f64 { p[1].atan2(p[0]) },
-            desc: "atan2(x, y)",
-        });
-
-        functions.insert("abs", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].abs() },
-            desc: "abs(n)",
-        });
-        functions.insert("log10", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].log10() },
-            desc: "log10(n)",
-        });
-        functions.insert("ln", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].ln() },
-            desc: "ln(n)",
-        });
-        functions.insert("log2", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].log2() },
-            desc: "log2(n)",
-        });
-        functions.insert("log", Function {
-            param_count: 2,
-            f: |p: &[f64]| -> f64 { p[0].log(p[1]) },
-            desc: "log(n, base)",
-        });
-        functions.insert("sqrt", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].sqrt() },
-            desc: "sqrt(n)",
-        });
-        functions.insert("cbrt", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].cbrt() },
-            desc: "cbrt(n)",
-        });
-        functions.insert("root", Function {
-            param_count: 2,
-            f: |p: &[f64]| -> f64 { p[0].powf(p[1].recip()) },
-            desc: "root(n, root)",
-        });
-        functions.insert("sign", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].signum() },
-            desc: "sign(n)",
-        });
-        functions.insert("exp", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].exp() },
-            desc: "exp(n)",
-        });
-
-        functions.insert("trunc", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].trunc() },
-            desc: "trunc(n)",
-        });
-        functions.insert("round", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].round() },
-            desc: "round(n)",
-        });
-        functions.insert("floor", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].floor() },
-            desc: "floor(n)",
-        });
-        functions.insert("ceil", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 { p[0].ceil() },
-            desc: "ceil(n)",
-        });
-
-        functions.insert("min", Function {
-            param_count: -2,
-            f: |p: &[f64]| -> f64 {
-                p.iter()
-                 .skip(1)
-                 .fold(p[0], |a, &b| a.min(b))
+        functions.insert(
+            "sin",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].sin_cos().0 },
+                desc: "sin(n)",
             },
-            desc: "min(a, b, ...)",
-        });
-        functions.insert("max", Function {
-            param_count: -2,
-            f: |p: &[f64]| -> f64 {
-                p.iter()
-                 .skip(1)
-                 .fold(p[0], |a, &b| a.max(b))
+        );
+        functions.insert(
+            "cos",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].sin_cos().1 },
+                desc: "cos(n)",
             },
-            desc: "max(a, b, ...)",
-        });
+        );
+        functions.insert(
+            "tan",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].tan() },
+                desc: "tan(n)",
+            },
+        );
 
-        functions.insert("rad2deg", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (180_f64 / ::std::f64::consts::PI)
+        functions.insert(
+            "sinh",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].sinh() },
+                desc: "sinh(n)",
             },
-            desc: "rad2deg(radians)",
-        });
-        functions.insert("deg2rad", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (::std::f64::consts::PI / 180_f64)
+        );
+        functions.insert(
+            "cosh",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].cosh() },
+                desc: "cosh(n)",
             },
-            desc: "deg2rad(degrees)",
-        });
+        );
+        functions.insert(
+            "tanh",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].tanh() },
+                desc: "tan(n)",
+            },
+        );
 
-        functions.insert("grad2deg", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (9_f64 / 10_f64)
+        functions.insert(
+            "asin",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].asin() },
+                desc: "asin(n)",
             },
-            desc: "grad2deg(gradians)",
-        });
-        functions.insert("deg2grad", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (10_f64 / 9_f64)
+        );
+        functions.insert(
+            "acos",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].acos() },
+                desc: "acos(n)",
             },
-            desc: "deg2grad(degrees)",
-        });
+        );
+        functions.insert(
+            "atan",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].atan() },
+                desc: "atan(n)",
+            },
+        );
+        functions.insert(
+            "atan2",
+            Function {
+                param_count: 2,
+                f: |p: &[f64]| -> f64 { p[1].atan2(p[0]) },
+                desc: "atan2(x, y)",
+            },
+        );
 
-        functions.insert("grad2rad", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (::std::f64::consts::PI / 200_f64)
+        functions.insert(
+            "abs",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].abs() },
+                desc: "abs(n)",
             },
-            desc: "grad2rad(gradians)",
-        });
-        functions.insert("rad2grad", Function {
-            param_count: 1,
-            f: |p: &[f64]| -> f64 {
-                p[0] * (200_f64 / ::std::f64::consts::PI)
+        );
+        functions.insert(
+            "log10",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].log10() },
+                desc: "log10(n)",
             },
-            desc: "rad2grad(radians)",
-        });
+        );
+        functions.insert(
+            "ln",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].ln() },
+                desc: "ln(n)",
+            },
+        );
+        functions.insert(
+            "log2",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].log2() },
+                desc: "log2(n)",
+            },
+        );
+        functions.insert(
+            "log",
+            Function {
+                param_count: 2,
+                f: |p: &[f64]| -> f64 { p[0].log(p[1]) },
+                desc: "log(n, base)",
+            },
+        );
+        functions.insert(
+            "sqrt",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].sqrt() },
+                desc: "sqrt(n)",
+            },
+        );
+        functions.insert(
+            "cbrt",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].cbrt() },
+                desc: "cbrt(n)",
+            },
+        );
+        functions.insert(
+            "root",
+            Function {
+                param_count: 2,
+                f: |p: &[f64]| -> f64 { p[0].powf(p[1].recip()) },
+                desc: "root(n, root)",
+            },
+        );
+        functions.insert(
+            "sign",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].signum() },
+                desc: "sign(n)",
+            },
+        );
+        functions.insert(
+            "exp",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].exp() },
+                desc: "exp(n)",
+            },
+        );
+
+        functions.insert(
+            "trunc",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].trunc() },
+                desc: "trunc(n)",
+            },
+        );
+        functions.insert(
+            "round",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].round() },
+                desc: "round(n)",
+            },
+        );
+        functions.insert(
+            "floor",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].floor() },
+                desc: "floor(n)",
+            },
+        );
+        functions.insert(
+            "ceil",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0].ceil() },
+                desc: "ceil(n)",
+            },
+        );
+
+        functions.insert(
+            "min",
+            Function {
+                param_count: -2,
+                f: |p: &[f64]| -> f64 { p.iter().skip(1).fold(p[0], |a, &b| a.min(b)) },
+                desc: "min(a, b, ...)",
+            },
+        );
+        functions.insert(
+            "max",
+            Function {
+                param_count: -2,
+                f: |p: &[f64]| -> f64 { p.iter().skip(1).fold(p[0], |a, &b| a.max(b)) },
+                desc: "max(a, b, ...)",
+            },
+        );
+
+        functions.insert(
+            "rad2deg",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (180_f64 / ::std::f64::consts::PI) },
+                desc: "rad2deg(radians)",
+            },
+        );
+        functions.insert(
+            "deg2rad",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (::std::f64::consts::PI / 180_f64) },
+                desc: "deg2rad(degrees)",
+            },
+        );
+
+        functions.insert(
+            "grad2deg",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (9_f64 / 10_f64) },
+                desc: "grad2deg(gradians)",
+            },
+        );
+        functions.insert(
+            "deg2grad",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (10_f64 / 9_f64) },
+                desc: "deg2grad(degrees)",
+            },
+        );
+
+        functions.insert(
+            "grad2rad",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (::std::f64::consts::PI / 200_f64) },
+                desc: "grad2rad(gradians)",
+            },
+        );
+        functions.insert(
+            "rad2grad",
+            Function {
+                param_count: 1,
+                f: |p: &[f64]| -> f64 { p[0] * (200_f64 / ::std::f64::consts::PI) },
+                desc: "rad2grad(radians)",
+            },
+        );
 
         let functions = Rc::new(RefCell::new(functions));
         let constants = Rc::new(constants);
@@ -230,24 +306,24 @@ impl Calculator {
 
     pub fn run(&mut self, input: &str) -> Result<String, String> {
         match self.parser.parse(Scanner::new(input)) {
-            Ok(result) => {
-                match result {
-                    Some(result) => {
-                        self.memory.borrow_mut().insert("ans".into(), result.val);
-                        if result.var.is_some() {
-                            self.memory.borrow_mut().insert(result.var.as_ref().unwrap().clone(), result.val);
-                            Ok(format!("{} = {}", result.var.unwrap(), result.val))
-                        } else {
-                            Ok(format!("{}", result.val))
-                        }
+            Ok(result) => match result {
+                Some(result) => {
+                    self.memory.borrow_mut().insert("ans".into(), result.val);
+                    if result.var.is_some() {
+                        self.memory
+                            .borrow_mut()
+                            .insert(result.var.as_ref().unwrap().clone(), result.val);
+                        Ok(format!("{} = {}", result.var.unwrap(), result.val))
+                    } else {
+                        Ok(format!("{}", result.val))
                     }
-                    None => Ok("".into()),
                 }
-            }
+                None => Ok("".into()),
+            },
             Err(e) => match self.functions.borrow().get(input) {
                 Some(f) => Ok(format!("{}", f.desc)),
                 None => Err(e),
-            }
+            },
         }
     }
 
@@ -350,7 +426,10 @@ mod test {
         assert_eq!(calc.run("ans").unwrap(), "3");
         assert_eq!(calc.run("4*(2*(3+2))").unwrap(), "40");
         assert_eq!(calc.run("5*4").unwrap(), "20");
-        assert_eq!(calc.run("12/10").unwrap(), (12.0 as f64 / 10.0 as f64).to_string());
+        assert_eq!(
+            calc.run("12/10").unwrap(),
+            (12.0 as f64 / 10.0 as f64).to_string()
+        );
         assert_eq!(calc.run("2+5").unwrap(), "7");
         assert_eq!(calc.run("ans").unwrap(), "7");
         assert_eq!(calc.run("ans*2").unwrap(), "14");
@@ -372,11 +451,20 @@ mod test {
     #[test]
     fn builtins() {
         run_test!("sin(PI)", format!("{}", ::std::f64::consts::PI.sin_cos().0));
-        run_test!("sin(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().0));
+        run_test!(
+            "sin(PI/2)",
+            format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().0)
+        );
         run_test!("cos(PI)", format!("{}", ::std::f64::consts::PI.sin_cos().1));
-        run_test!("cos(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().1));
+        run_test!(
+            "cos(PI/2)",
+            format!("{}", (::std::f64::consts::PI / 2.0).sin_cos().1)
+        );
         run_test!("tan(PI)", format!("{}", ::std::f64::consts::PI.tan()));
-        run_test!("tan(PI/2)", format!("{}", (::std::f64::consts::PI / 2.0).tan()));
+        run_test!(
+            "tan(PI/2)",
+            format!("{}", (::std::f64::consts::PI / 2.0).tan())
+        );
         run_test!("abs(5)", "5");
         run_test!("abs(-5)", "5");
         run_test!("abs(-1.23)", "1.23");
@@ -408,8 +496,14 @@ mod test {
         run_test!("rad2deg(16)", format!("{}", 16_f64.to_degrees()));
         run_test!("deg2rad(16)", format!("{}", 16_f64.to_radians()));
 
-        run_test!("rad2grad(16)", format!("{}", 16_f64 * 200_f64 / ::std::f64::consts::PI));
-        run_test!("grad2rad(16)", format!("{}", 16_f64 * ::std::f64::consts::PI / 200_f64));
+        run_test!(
+            "rad2grad(16)",
+            format!("{}", 16_f64 * 200_f64 / ::std::f64::consts::PI)
+        );
+        run_test!(
+            "grad2rad(16)",
+            format!("{}", 16_f64 * ::std::f64::consts::PI / 200_f64)
+        );
 
         run_test!("deg2grad(16)", format!("{}", 16_f64 * 10_f64 / 9_f64));
         run_test!("grad2deg(16)", format!("{}", 16_f64 * 9_f64 / 10_f64));

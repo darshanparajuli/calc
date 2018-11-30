@@ -1,7 +1,7 @@
 use calc::{Function, Scanner, Token, TokenType};
+use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
-use std::cell::RefCell;
 
 /// Grammar
 /// Input   = [ Identifier "=" ] Exp.           // "=" requires look-ahead
@@ -28,7 +28,7 @@ enum NonTerminal {
     Power,
     Call,
     ExpList,
-    Literal
+    Literal,
 }
 
 #[derive(Debug)]
@@ -138,7 +138,10 @@ impl Parser {
     }
 
     fn have_nt(&mut self, nt: &NonTerminal) -> bool {
-        self.first_sets.get(nt).unwrap().contains(&self.token.token_type)
+        self.first_sets
+            .get(nt)
+            .unwrap()
+            .contains(&self.token.token_type)
     }
 
     fn have(&mut self, token_type: &TokenType) -> bool {
@@ -306,15 +309,24 @@ impl Parser {
             self.expect(&TokenType::CloseParen)?;
             match self.functions.borrow().get(&lexeme.as_ref()) {
                 Some(function) => {
-                    if (function.param_count < 0 && params.len() >= function.param_count.abs() as usize) ||
-                       (params.len() == function.param_count as usize) {
+                    if (function.param_count < 0
+                        && params.len() >= function.param_count.abs() as usize)
+                        || (params.len() == function.param_count as usize)
+                    {
                         let f = function.f;
                         Ok(f(&params))
                     } else {
                         if function.param_count < 0 {
-                            Err(format!("{} requires {} or more arguments", lexeme, function.param_count.abs()))
+                            Err(format!(
+                                "{} requires {} or more arguments",
+                                lexeme,
+                                function.param_count.abs()
+                            ))
                         } else {
-                            Err(format!("{} requires {} arguments", lexeme, function.param_count))
+                            Err(format!(
+                                "{} requires {} arguments",
+                                lexeme, function.param_count
+                            ))
                         }
                     }
                 }
@@ -326,7 +338,7 @@ impl Parser {
                 None => match self.memory.borrow().get(&lexeme) {
                     Some(v) => Ok(*v),
                     None => Err(format!("unknown variable: {}", lexeme)),
-                }
+                },
             }
         }
     }
