@@ -61,5 +61,6 @@ fn help(calc: &Calculator) {
         calc.get_constants().join(", ")
     );
     println!("   Functions: {}", calc.get_functions().join(", "));
-    println!("   Variables: ans\n");
+    println!("   Variables: ans");
+    println!("   Commands:  help, reset, exit\n");
 }
