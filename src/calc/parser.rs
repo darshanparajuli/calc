@@ -1,4 +1,4 @@
-use calc::{Function, Scanner, Token, TokenType};
+use crate::calc::{Function, Scanner, Token, TokenType};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;

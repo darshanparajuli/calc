@@ -1,66 +1,91 @@
-extern crate ansi_term;
-
 mod calc;
 
-use ansi_term::Color::{Green, Red};
-use ansi_term::Style;
 use calc::Calculator;
-use std::io::{self, Write};
+use std::io::{self, BufRead, Write};
+use termion;
+use termion::{color, style};
 
-fn main() {
+fn main() -> Result<(), io::Error> {
     let mut input = String::new();
     let mut calc = Calculator::new();
 
+    let stdin = io::stdin();
+    let mut handle_in = stdin.lock();
+
+    let stdout = io::stdout();
+    let mut handle_out = stdout.lock();
+
     loop {
-        prompt();
+        prompt(&mut handle_out)?;
 
         input.clear();
-        match io::stdin().read_line(&mut input) {
+        match handle_in.read_line(&mut input) {
             Ok(0) => {
-                println!();
+                write!(handle_out, "\n")?;
+                handle_out.flush()?;
                 break;
             }
             Ok(_) => match input.trim() {
                 "exit" => break,
                 "reset" => calc.reset(),
-                "help" => help(&calc),
+                "help" => help(&mut handle_out, &calc)?,
                 input => match calc.run(&input) {
                     Ok(result) => {
                         if !result.is_empty() {
-                            print_result(&result);
+                            print_result(&mut handle_out, &result)?;
                         }
                     }
-                    Err(e) => print_err(&e),
+                    Err(e) => print_err(&mut handle_out, &e)?,
                 },
             },
             Err(e) => {
-                println!("stdin error: {}\n", e);
+                write!(handle_out, "stdin error: {}\n", e)?;
+                handle_out.flush()?;
                 continue;
             }
         }
     }
+
+    Ok(())
 }
 
-fn prompt() {
-    print!("{} ", Style::new().bold().paint("λ"));
-    io::stdout().flush().unwrap();
+fn prompt<W: Write>(w: &mut W) -> Result<(), io::Error> {
+    write!(
+        w,
+        "{}{}λ {}",
+        style::Bold,
+        color::Fg(color::Reset),
+        style::Reset
+    )?;
+    w.flush()?;
+
+    Ok(())
 }
 
-fn print_result(result: &str) {
-    println!("{} {}\n", Green.paint("=>"), result);
+fn print_result<W: Write>(w: &mut W, result: &str) -> Result<(), io::Error> {
+    write!(w, "{}=> {}\n\n", color::Fg(color::Green), result)?;
+    w.flush()?;
+    Ok(())
 }
 
-fn print_err(err: &str) {
-    println!("{} {}\n", Red.paint("=>"), err);
+fn print_err<W: Write>(w: &mut W, err: &str) -> Result<(), io::Error> {
+    write!(w, "{}=> {}\n\n", color::Fg(color::Red), err)?;
+    w.flush()?;
+    Ok(())
 }
 
-fn help(calc: &Calculator) {
-    println!(
-        "{} Constants: {}",
-        Green.paint("=>"),
+fn help<W: Write>(w: &mut W, calc: &Calculator) -> Result<(), io::Error> {
+    write!(
+        w,
+        "{}=> Constants: {}",
+        color::Fg(color::Green),
         calc.get_constants().join(", ")
-    );
-    println!("   Functions: {}", calc.get_functions().join(", "));
-    println!("   Variables: ans");
-    println!("   Commands:  help, reset, exit\n");
+    )?;
+    write!(w, "   Functions: {}", calc.get_functions().join(", "))?;
+    write!(w, "   Variables: ans")?;
+    write!(w, "   Commands:  help, reset, exit\n")?;
+    write!(w, "\n")?;
+    w.flush()?;
+
+    Ok(())
 }

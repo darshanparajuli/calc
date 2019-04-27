@@ -1,4 +1,4 @@
-use calc::{Parser, Scanner};
+use crate::calc::{Parser, Scanner};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
