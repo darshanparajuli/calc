@@ -353,7 +353,7 @@ impl Calculator {
 
 #[cfg(test)]
 mod test {
-    use calc::Calculator;
+    use crate::calc::Calculator;
 
     macro_rules! run_test {
         ($input:expr, $expected: expr) => {
