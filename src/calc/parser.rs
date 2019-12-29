@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 /// Grammar
 /// Input   = [ Identifier "=" ] Exp.           // "=" requires look-ahead
-/// Exp     = Added { Op0 Addend }.
+/// Exp     = Addend { Op0 Addend }.
 /// Addend  = Factor { Op1 Factor }.
 /// Factor  = Power [ Op2 Factor ].
 /// Power   = Literal | Call | "(" Exp ")" | Op0 Power.
