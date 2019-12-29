@@ -515,7 +515,10 @@ mod test {
         run_test_err!("2-");
         run_test_err!("sin 2");
         run_test_err!("()");
-        run_test_err!("a");
+        run_test_err!("(a");
+        run_test_err!("a)");
+        run_test_err!("1+2(2)");
+        run_test_err!("1/2+");
     }
 
     #[test]
