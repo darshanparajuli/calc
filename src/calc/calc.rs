@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 pub struct Function {
     pub param_count: isize,
-    pub f: (fn(&[f64]) -> f64),
+    pub f: fn(&[f64]) -> f64,
     desc: &'static str,
 }
 
