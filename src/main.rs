@@ -21,7 +21,7 @@ fn main() -> Result<(), io::Error> {
         input.clear();
         match handle_in.read_line(&mut input) {
             Ok(0) => {
-                write!(handle_out, "\n")?;
+                writeln!(handle_out)?;
                 handle_out.flush()?;
                 break;
             }
@@ -39,7 +39,7 @@ fn main() -> Result<(), io::Error> {
                 },
             },
             Err(e) => {
-                write!(handle_out, "stdin error: {}\n", e)?;
+                writeln!(handle_out, "stdin error: {}", e)?;
                 handle_out.flush()?;
                 continue;
             }
@@ -63,13 +63,13 @@ fn prompt<W: Write>(w: &mut W) -> Result<(), io::Error> {
 }
 
 fn print_result<W: Write>(w: &mut W, result: &str) -> Result<(), io::Error> {
-    write!(w, "{}=> {}\n\n", color::Fg(color::Green), result)?;
+    writeln!(w, "{}=> {}\n", color::Fg(color::Green), result)?;
     w.flush()?;
     Ok(())
 }
 
 fn print_err<W: Write>(w: &mut W, err: &str) -> Result<(), io::Error> {
-    write!(w, "{}=> {}\n\n", color::Fg(color::Red), err)?;
+    writeln!(w, "{}=> {}\n", color::Fg(color::Red), err)?;
     w.flush()?;
     Ok(())
 }
@@ -83,8 +83,8 @@ fn help<W: Write>(w: &mut W, calc: &Calculator) -> Result<(), io::Error> {
     )?;
     write!(w, "   Functions: {}", calc.get_functions().join(", "))?;
     write!(w, "   Variables: ans")?;
-    write!(w, "   Commands:  help, reset, exit\n")?;
-    write!(w, "\n")?;
+    writeln!(w, "   Commands:  help, reset, exit")?;
+    writeln!(w)?;
     w.flush()?;
 
     Ok(())

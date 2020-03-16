@@ -321,7 +321,7 @@ impl Calculator {
                 None => Ok("".into()),
             },
             Err(e) => match self.functions.borrow().get(input) {
-                Some(f) => Ok(format!("{}", f.desc)),
+                Some(f) => Ok(f.desc.to_string()),
                 None => Err(e),
             },
         }
@@ -335,19 +335,19 @@ impl Calculator {
     pub fn get_functions(&self) -> Vec<&str> {
         let mut v = Vec::new();
         for (n, _) in self.functions.borrow().iter() {
-            v.push(n.clone());
+            v.push(*n);
         }
         v.sort();
-        return v;
+        v
     }
 
     pub fn get_constants(&self) -> Vec<&str> {
         let mut v = Vec::new();
         for (c, _) in self.constants.iter() {
-            v.push(c.clone());
+            v.push(*c);
         }
         v.sort();
-        return v;
+        v
     }
 }
 

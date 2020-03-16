@@ -137,40 +137,40 @@ impl Parser {
         }
     }
 
-    fn have_nt(&mut self, nt: &NonTerminal) -> bool {
+    fn have_nt(&mut self, nt: NonTerminal) -> bool {
         self.first_sets
-            .get(nt)
+            .get(&nt)
             .unwrap()
             .contains(&self.token.token_type)
     }
 
-    fn have(&mut self, token_type: &TokenType) -> bool {
-        self.token.token_type == *token_type
+    fn have(&mut self, token_type: TokenType) -> bool {
+        self.token.token_type == token_type
     }
 
-    fn have_next(&mut self, token_type: &TokenType) -> bool {
-        self.scanner.as_mut().unwrap().look_ahead().token_type == *token_type
+    fn have_next(&mut self, token_type: TokenType) -> bool {
+        self.scanner.as_mut().unwrap().look_ahead().token_type == token_type
     }
 
-    fn accept(&mut self, token_type: &TokenType) -> bool {
+    fn accept(&mut self, token_type: TokenType) -> bool {
         if self.have(token_type) {
-            self.token = self.scanner.as_mut().unwrap().next_token().clone();
+            self.token = self.scanner.as_mut().unwrap().next_token();
             true
         } else {
             false
         }
     }
 
-    fn accept_nt(&mut self, nt: &NonTerminal) -> bool {
+    fn accept_nt(&mut self, nt: NonTerminal) -> bool {
         if self.have_nt(nt) {
-            self.token = self.scanner.as_mut().unwrap().next_token().clone();
+            self.token = self.scanner.as_mut().unwrap().next_token();
             true
         } else {
             false
         }
     }
 
-    fn expect(&mut self, token_type: &TokenType) -> Result<(), String> {
+    fn expect(&mut self, token_type: TokenType) -> Result<(), String> {
         if self.accept(token_type) {
             Ok(())
         } else {
@@ -178,7 +178,7 @@ impl Parser {
         }
     }
 
-    fn expect_retrieve(&mut self, token_type: &TokenType) -> Result<Token, String> {
+    fn expect_retrieve(&mut self, token_type: TokenType) -> Result<Token, String> {
         let token = self.token.clone();
         if self.accept(token_type) {
             Ok(token)
@@ -187,7 +187,7 @@ impl Parser {
         }
     }
 
-    fn expect_nt_retrieve(&mut self, nt: &NonTerminal) -> Result<Token, String> {
+    fn expect_nt_retrieve(&mut self, nt: NonTerminal) -> Result<Token, String> {
         let token = self.token.clone();
         if self.accept_nt(nt) {
             Ok(token)
@@ -197,19 +197,19 @@ impl Parser {
     }
 
     fn op0(&mut self) -> Result<Token, String> {
-        self.expect_nt_retrieve(&NonTerminal::Op0)
+        self.expect_nt_retrieve(NonTerminal::Op0)
     }
 
     fn op1(&mut self) -> Result<Token, String> {
-        self.expect_nt_retrieve(&NonTerminal::Op1)
+        self.expect_nt_retrieve(NonTerminal::Op1)
     }
 
     fn op2(&mut self) -> Result<Token, String> {
-        self.expect_nt_retrieve(&NonTerminal::Op2)
+        self.expect_nt_retrieve(NonTerminal::Op2)
     }
 
     fn literal(&mut self) -> Result<f64, String> {
-        let token = self.expect_nt_retrieve(&NonTerminal::Literal)?;
+        let token = self.expect_nt_retrieve(NonTerminal::Literal)?;
         match token.lexeme.parse::<f64>() {
             Ok(v) => Ok(v),
             Err(e) => Err(format!("{}", e)),
@@ -217,15 +217,15 @@ impl Parser {
     }
 
     fn power(&mut self) -> Result<f64, String> {
-        if self.have_nt(&NonTerminal::Literal) {
+        if self.have_nt(NonTerminal::Literal) {
             Ok(self.literal()?)
-        } else if self.have_nt(&NonTerminal::Call) {
+        } else if self.have_nt(NonTerminal::Call) {
             Ok(self.call()?)
-        } else if self.accept(&TokenType::OpenParen) {
+        } else if self.accept(TokenType::OpenParen) {
             let v = self.exp()?;
-            self.expect(&TokenType::CloseParen)?;
+            self.expect(TokenType::CloseParen)?;
             Ok(v)
-        } else if self.have_nt(&NonTerminal::Op0) {
+        } else if self.have_nt(NonTerminal::Op0) {
             let op0 = self.op0()?;
             let val = self.power()?;
             match op0.lexeme.as_ref() {
@@ -240,7 +240,7 @@ impl Parser {
 
     fn factor(&mut self) -> Result<f64, String> {
         let mut a = self.power()?;
-        if self.have_nt(&NonTerminal::Op2) {
+        if self.have_nt(NonTerminal::Op2) {
             let op2 = self.op2()?;
             let b = self.factor()?;
 
@@ -256,14 +256,14 @@ impl Parser {
     fn addend(&mut self) -> Result<f64, String> {
         let mut a = self.factor()?;
 
-        while self.have_nt(&NonTerminal::Op1) {
+        while self.have_nt(NonTerminal::Op1) {
             let op1 = self.op1()?;
             let b = self.factor()?;
 
             match op1.lexeme.as_ref() {
-                "*" => a = a * b,
-                "/" => a = a / b,
-                "%" => a = a % b,
+                "*" => a *= b,
+                "/" => a /= b,
+                "%" => a %= b,
                 _ => unreachable!("BUG ALERT!"),
             }
         }
@@ -274,13 +274,13 @@ impl Parser {
     fn exp(&mut self) -> Result<f64, String> {
         let mut a = self.addend()?;
 
-        while self.have_nt(&NonTerminal::Op0) {
+        while self.have_nt(NonTerminal::Op0) {
             let op0 = self.op0()?;
             let b = self.addend()?;
 
             match op0.lexeme.as_ref() {
-                "-" => a = a - b,
-                "+" => a = a + b,
+                "-" => a -= b,
+                "+" => a += b,
                 _ => unreachable!("BUG ALERT"),
             }
         }
@@ -290,10 +290,10 @@ impl Parser {
 
     fn exp_list(&mut self) -> Result<Vec<f64>, String> {
         let mut exp_list = Vec::new();
-        if self.have_nt(&NonTerminal::Exp) {
+        if self.have_nt(NonTerminal::Exp) {
             exp_list.push(self.exp()?);
 
-            while self.accept(&TokenType::Comma) {
+            while self.accept(TokenType::Comma) {
                 exp_list.push(self.exp()?);
             }
         }
@@ -302,11 +302,11 @@ impl Parser {
     }
 
     fn call(&mut self) -> Result<f64, String> {
-        let lexeme = self.expect_retrieve(&TokenType::Identifier)?.lexeme;
+        let lexeme = self.expect_retrieve(TokenType::Identifier)?.lexeme;
 
-        if self.accept(&TokenType::OpenParen) {
+        if self.accept(TokenType::OpenParen) {
             let params = self.exp_list()?;
-            self.expect(&TokenType::CloseParen)?;
+            self.expect(TokenType::CloseParen)?;
             match self.functions.borrow().get(&lexeme.as_ref()) {
                 Some(function) => {
                     if (function.param_count < 0
@@ -315,19 +315,17 @@ impl Parser {
                     {
                         let f = function.f;
                         Ok(f(&params))
+                    } else if function.param_count < 0 {
+                        Err(format!(
+                            "{} requires {} or more arguments",
+                            lexeme,
+                            function.param_count.abs()
+                        ))
                     } else {
-                        if function.param_count < 0 {
-                            Err(format!(
-                                "{} requires {} or more arguments",
-                                lexeme,
-                                function.param_count.abs()
-                            ))
-                        } else {
-                            Err(format!(
-                                "{} requires {} arguments",
-                                lexeme, function.param_count
-                            ))
-                        }
+                        Err(format!(
+                            "{} requires {} arguments",
+                            lexeme, function.param_count
+                        ))
                     }
                 }
                 None => Err(format!("unknown function: {}", lexeme)),
@@ -365,14 +363,14 @@ impl Parser {
             var: None,
             val: 0.0,
         };
-        if self.have(&TokenType::Identifier) && self.have_next(&TokenType::Equal) {
+        if self.have(TokenType::Identifier) && self.have_next(TokenType::Equal) {
             if !self.is_valid_assignment(&self.token.lexeme) {
                 return Err("cannot assign to built-in vars, constants or functions".into());
             }
 
             result.var = Some(self.token.lexeme.clone());
-            self.accept(&TokenType::Identifier);
-            self.accept(&TokenType::Equal);
+            self.accept(TokenType::Identifier);
+            self.accept(TokenType::Equal);
         }
 
         result.val = self.exp()?;
@@ -384,13 +382,13 @@ impl Parser {
         self.scanner = Some(scanner);
         self.token = self.scanner.as_mut().unwrap().next_token();
 
-        let mut result: Option<PResult> = None;
+        let result: Option<PResult> = if self.have_nt(NonTerminal::Line) {
+            Some(self.input()?)
+        } else {
+            None
+        };
 
-        if self.have_nt(&NonTerminal::Line) {
-            result = Some(self.input()?);
-        }
-
-        self.expect(&TokenType::EOL)?;
+        self.expect(TokenType::EOL)?;
         Ok(result)
     }
 }

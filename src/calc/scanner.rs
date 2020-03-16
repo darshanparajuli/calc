@@ -37,7 +37,7 @@ impl Clone for Token {
     fn clone(&self) -> Token {
         Token {
             lexeme: self.lexeme.clone(),
-            token_type: self.token_type.clone(),
+            token_type: self.token_type,
         }
     }
 }
@@ -299,7 +299,7 @@ impl Scanner {
     pub fn look_ahead(&mut self) -> Token {
         let char_pos = self.char_pos;
         let next_char = self.next_char;
-        let next_state = self.next_state.clone();
+        let next_state = self.next_state;
 
         let token = self.next_token();
 
@@ -307,7 +307,7 @@ impl Scanner {
         self.next_char = next_char;
         self.next_state = next_state;
 
-        return token;
+        token
     }
 }
 
